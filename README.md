@@ -18,22 +18,19 @@ Or install it yourself as:
 
     $ gem install active_record_block_matchers
 
-## Usage
+## Custom Matchers
+
+#### `create_a_new`
+
+Example:
 
 ```ruby
-RSpec.describe PostsController do
-  describe "POST create" do
-    let(:jill) { User.create!(name: "Jill Sherman") }
-    let(:post_attrs) { { author: jill, title: "10 Reasons I Don't Hate ActiveRecordBlockMatchers", body: "Further link bait goes here..." } }
-
-    it "creates a new blog post" do
-      expect { post :create, post: post_attrs }
-        .to create_a_new(post)
-        .with_attributes(post_attrs)
-    end
-  end
-end
+expect { User.create!(username: "BOB") }
+  .to create_a_new(User)
+  .with_attributes(username: "bob")
 ```
+
+This matcher relies on a `created_at` column existing on the given model class.  The name of this column can be configured via `ActiveRecordBlockMatchers::Config.created_at_column_name = "your_column_name"`
 
 ## Development
 

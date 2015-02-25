@@ -9,7 +9,7 @@ RSpec::Matchers.define :create_a_new do |klass|
     @attributes ||= {}
     time_before = Time.current
     block.call
-    @created_records = klass.where("created_at > ?", time_before)
+    @created_records = klass.where("? > ?", ActiveRecordBlockMatchers::Config.created_at_column_name, time_before)
     return false unless @created_records.count == 1
 
     @failures = []

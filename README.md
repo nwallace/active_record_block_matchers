@@ -1,8 +1,6 @@
 # ActiveRecordBlockMatchers
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/active_record_block_matchers`. To experiment with that code, run `bin/console` for an interactive prompt.
-
-TODO: Delete this and the text above, and describe your gem
+Custom RSpec matchers for ActiveRecord record creation
 
 ## Installation
 
@@ -22,7 +20,20 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+```ruby
+RSpec.describe PostsController do
+  describe "POST create" do
+    let(:jill) { User.create!(name: "Jill Sherman") }
+    let(:post_attrs) { { author: jill, title: "10 Reasons I Don't Hate ActiveRecordBlockMatchers", body: "Further link bait goes here..." } }
+
+    it "creates a new blog post" do
+      expect { post :create, post: post_attrs }
+        .to create_a_new(post)
+        .with_attributes(post_attrs)
+    end
+  end
+end
+```
 
 ## Development
 

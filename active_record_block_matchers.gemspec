@@ -9,13 +9,9 @@ Gem::Specification.new do |spec|
   spec.authors       = ["Nathan Wallace"]
   spec.email         = ["nathan.m.wallace@gmail.com"]
 
-  if spec.respond_to?(:metadata)
-    spec.metadata["allowed_push_host"] = "TODO: Set to 'http://mygemserver.com' to prevent pushes to rubygems.org, or delete to allow pushes to any server."
-  end
-
-  spec.summary       = %q{TODO: Write a short summary, because Rubygems requires one.}
-  spec.description   = %q{TODO: Write a longer description or delete this line.}
-  spec.homepage      = "TODO: Put your gem's website or public repo URL here."
+  spec.summary       = %q{Additional RSpec custom matchers for ActiveRecord}
+  spec.description   = %q{This gem adds custom block expectation matchers for RSpec, such as `expect { ... }.to create_a_new(User)`}
+  spec.homepage      = "https://github.com/nwallace/active_record_block_matchers"
   spec.license       = "MIT"
 
   spec.files         = `git ls-files -z`.split("\x0").reject { |f| f.match(%r{^(test|spec|features)/}) }

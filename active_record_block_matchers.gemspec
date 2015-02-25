@@ -18,8 +18,16 @@ Gem::Specification.new do |spec|
   spec.bindir        = "exe"
   spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
   spec.require_paths = ["lib"]
+  spec.required_ruby_version = ">= 1.9.3"
+
+  spec.add_dependency "activerecord", ">= 3.2.0"
+  spec.add_dependency "rspec", ">= 3.0.0"
 
   spec.add_development_dependency "bundler", "~> 1.8"
   spec.add_development_dependency "rake", "~> 10.0"
   spec.add_development_dependency "pry", "~> 0.10.1"
+  spec.add_development_dependency "activerecord", "~> 3.2.0"
+  spec.add_development_dependency "rspec", "~> 3.0.0"
+  spec.add_development_dependency "sqlite3", "~> 1.3.10"
+  spec.add_development_dependency "standalone_migrations", "~> 2.1.5"
 end

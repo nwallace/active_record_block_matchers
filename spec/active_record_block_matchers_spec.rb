@@ -51,4 +51,16 @@ RSpec.describe ActiveRecordBlockMatchers do
       }.to raise_error
     end
   end
+
+  describe "configuration" do
+    it "allows created_at_column_name to be configured" do
+      original_column_name = described_class::Config.created_at_column_name
+      described_class::Config.created_at_column_name = "create_timestamp"
+      begin
+        expect(described_class::Config.created_at_column_name).to eq "create_timestamp"
+      ensure
+        described_class::Config.created_at_column_name = original_column_name
+      end
+    end
+  end
 end

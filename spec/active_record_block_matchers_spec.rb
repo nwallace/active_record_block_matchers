@@ -22,6 +22,13 @@ RSpec.describe ActiveRecordBlockMatchers do
       }.to raise_error
     end
 
+    it "doesn't find records created before the block" do
+      Person.create!
+      expect {
+        expect {}.to create_a_new(Person)
+      }.to raise_error
+    end
+
     it "can chain `with_attributes`" do
       expect { Person.create!(first_name: "Pam", last_name: "Greer") }
         .to create_a_new(Person)

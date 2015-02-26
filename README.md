@@ -22,7 +22,29 @@ Or install it yourself as:
 
 #### `create_a_new`
 
+aliases: `create_a`, `create_an`
+
 Example:
+
+```ruby
+expect { User.create! }.to create_a_new(User)
+```
+
+This can be very useful for controller tests:
+
+```ruby
+expect { post :create, user: user_params }.to create_a_new(User)
+```
+
+You can chain `.with_attributes` as well to define a list of values you expect the new object to have.  This works with both database attributes and computed values.
+
+```ruby
+expect { User.create!(username: "bob") }
+  .to create_a_new(User)
+  .with_attributes(username: "bob")
+```
+
+This is a great way to test ActiveReocrd hooks on your model.  For example, if your User model downcases all usernames before saving them to the database, you can test it like this:
 
 ```ruby
 expect { User.create!(username: "BOB") }

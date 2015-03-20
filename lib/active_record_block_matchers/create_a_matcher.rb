@@ -1,6 +1,10 @@
 RSpec::Matchers.define :create_a_new do |klass|
   supports_block_expectations
 
+  description do
+    "create a #{klass}, optionally verifying attributes"
+  end
+
   chain(:with_attributes) do |attributes|
     @attributes = attributes
   end
@@ -10,39 +14,40 @@ RSpec::Matchers.define :create_a_new do |klass|
   end
 
   match do |block|
-    @attributes ||= {}
     time_before = Time.current
+
     block.call
+
     column_name = ActiveRecordBlockMatchers::Config.created_at_column_name
     @created_records = klass.where("#{column_name} > ?", time_before)
     return false unless @created_records.count == 1
 
-    @failures = []
     record = @created_records.first
-    @attributes.each do |field, value|
+
+    @attribute_mismatches = []
+
+    @attributes && @attributes.each do |field, value|
       unless record.public_send(field) == value
-        @failures << [field, value, record.public_send(field)]
+        @attribute_mismatches << [field, value, record.public_send(field)]
       end
     end
-    if @failures.empty? && @which_block
+
+    if @attribute_mismatches.none? && @which_block
       begin
         @which_block.call(record)
       rescue RSpec::Expectations::ExpectationNotMetError => e
         @which_failure = e
       end
     end
-    @failures.empty? && !@which_failure
-  end
 
-  description do
-    "create a #{klass}, optionally verifying attributes"
+    @attribute_mismatches.empty? && @which_failure.nil?
   end
 
   failure_message do
     if @created_records.count != 1
       "the block should have created 1 #{klass}, but created #{@created_records.count}"
-    elsif @failures.any?
-      @failures.map do |field, expected, actual|
+    elsif @attribute_mismatches.any?
+      @attribute_mismatches.map do |field, expected, actual|
         "Expected #{field} to be: #{expected}, but was: #{actual}"
       end.join("\n")
     else

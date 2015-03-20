@@ -5,6 +5,10 @@ RSpec::Matchers.define :create_a_new do |klass|
     @attributes = attributes
   end
 
+  chain(:which) do |&block|
+    @which_block = block
+  end
+
   match do |block|
     @attributes ||= {}
     time_before = Time.current
@@ -20,7 +24,14 @@ RSpec::Matchers.define :create_a_new do |klass|
         @failures << [field, value, record.public_send(field)]
       end
     end
-    @failures.empty?
+    if @failures.empty? && @which_block
+      begin
+        @which_block.call(record)
+      rescue RSpec::Expectations::ExpectationNotMetError => e
+        @which_failure = e
+      end
+    end
+    @failures.empty? && !@which_failure
   end
 
   description do
@@ -30,10 +41,12 @@ RSpec::Matchers.define :create_a_new do |klass|
   failure_message do
     if @created_records.count != 1
       "the block should have created 1 #{klass}, but created #{@created_records.count}"
-    else
+    elsif @failures.any?
       @failures.map do |field, expected, actual|
         "Expected #{field} to be: #{expected}, but was: #{actual}"
       end.join("\n")
+    else
+      @which_failure.message
     end
   end
 
@@ -41,7 +54,7 @@ RSpec::Matchers.define :create_a_new do |klass|
     if @created_records.count == 1
       "the block should not have created a #{klass}, but created #{@created_records.count}"
     else
-      "the block created a #{klass} that matched all given attributes"
+      "the block created a #{klass} that matched all given criteria"
     end
   end
 end

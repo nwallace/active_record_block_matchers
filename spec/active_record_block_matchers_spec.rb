@@ -43,6 +43,17 @@ RSpec.describe ActiveRecordBlockMatchers do
       }.to raise_error
     end
 
+    it "can chain `which` that takes a block" do
+      block_was_called = false
+      expect { Person.create!(first_name: "Pam", last_name: "Greer") }
+        .to create_a_new(Person)
+        .which { |person|
+          expect(person.full_name).to eq "Pam Greer"
+          block_was_called = true
+        }
+      expect(block_was_called).to be_truthy
+    end
+
     it "is aliases as `create_a`" do
       expect { Person.create! }.to create_a(Person)
     end

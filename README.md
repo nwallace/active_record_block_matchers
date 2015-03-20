@@ -52,6 +52,19 @@ expect { User.create!(username: "BOB") }
   .with_attributes(username: "bob")
 ```
 
+If you need to make assertions about things other than attribute equality, you can also chain `.which` with a block, and your block will receive the newly created record:
+
+```ruby
+expect { User.create!(username: "BOB", password: "BlueSteel45") }
+  .to create_a_new(User)
+  .which { |user|
+    expect(user.encrypted_password).to be_present
+    expect(AuthLibrary.authenticate("bob", "BlueSteel45")).to eq user
+  }
+```
+
+**Gotcha Warning:** Be careful about your block syntax when chaining `.which` in your tests. If you write the above example with a `do...end`, the example will parse like this: `expect {...}.to(create_a_new(User).which) do |user| ... end`, so your block will not execute, and it may appear that your test is passing, when it is not.
+
 This matcher relies on a `created_at` column existing on the given model class.  The name of this column can be configured via `ActiveRecordBlockMatchers::Config.created_at_column_name = "your_column_name"`
 
 ## Development

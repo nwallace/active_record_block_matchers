@@ -68,6 +68,80 @@ RSpec.describe ActiveRecordBlockMatchers do
         expect { Person.create! }.not_to create_a(Person)
       }.to raise_error
     end
+
+    describe "failure message" do
+      def capture_error
+        begin
+          yield
+        rescue RSpec::Expectations::ExpectationNotMetError => e
+          e
+        end
+      end
+
+      it "explains if no record was created" do
+        error = capture_error do
+          expect {}.to create_a(Person)
+        end
+
+        expect(error.message).to eq "the block should have created 1 Person, but created 0"
+      end
+
+      it "explains if more than one record was created" do
+        error = capture_error do
+          expect { Person.create!; Person.create! }.to create_a(Person)
+        end
+
+        expect(error.message).to eq "the block should have created 1 Person, but created 2"
+      end
+
+      it "explains if record was created, but attributes did not match" do
+        error = capture_error do
+          expect { Person.create! }.to create_a(Person)
+            .with_attributes(first_name: "Jill")
+        end
+
+        expect(error.message).to eq 'Expected :first_name to be "Jill", but was nil'
+      end
+
+      it "explains if record was created, but `which` block raised an error" do
+        error = capture_error do
+          expect { Person.create! }.to create_a(Person)
+            .which { |p| expect(p.first_name).to eq "Jill" }
+        end
+
+        expect(error.message).to match /expected: "Jill"\s+got: nil/m
+      end
+
+      context "when negated" do
+        it "explains if a record was created" do
+          error = capture_error do
+            expect { Person.create! }.not_to create_a(Person)
+          end
+
+          expect(error.message).to start_with "the block should not have created a Person, but created 1"
+        end
+
+        it "explains if a record was created that matched the given attributes" do
+          error = capture_error do
+            expect { Person.create!(first_name: "Jill") }
+              .not_to create_a(Person)
+              .with_attributes(first_name: "Jill")
+          end
+
+          expect(error.message).to eq 'the block should not have created a Person with attributes {:first_name=>"Jill"}, but did'
+        end
+
+        it "explains if a record was created and `which` block didn't raise an error" do
+          error = capture_error do
+            expect { Person.create!(first_name: "Jill") }
+              .not_to create_a(Person)
+              .which { |p| expect(p.first_name).to eq "Jill" }
+          end
+
+          expect(error.message).to eq "the newly created Person should have failed an expectation in the given block, but didn't"
+        end
+      end
+    end
   end
 
   describe "configuration" do

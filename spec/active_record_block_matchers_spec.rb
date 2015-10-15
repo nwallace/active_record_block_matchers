@@ -144,6 +144,19 @@ RSpec.describe ActiveRecordBlockMatchers do
     end
   end
 
+  describe "'create' matcher" do
+    it "passes if a new record of the given type was created by the block" do
+      expect { Person.create! }.to create(Person)
+    end
+    it "passes if multiple new records of the given type were created by the block" do
+      expect {
+        Person.create!
+        Dog.create!
+      }.to create({Person: 1,
+                      Dog: 2})
+    end
+  end
+
   describe "configuration" do
     it "allows created_at_column_name to be configured" do
       original_column_name = described_class::Config.created_at_column_name

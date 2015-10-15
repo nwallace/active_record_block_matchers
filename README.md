@@ -1,3 +1,6 @@
+# Build Status
+[![Build Status](https://travis-ci.org/nwallace/active_record_block_matchers.svg)](https://travis-ci.org/nwallace/active_record_block_matchers)
+
 # ActiveRecordBlockMatchers
 
 Custom RSpec matchers for ActiveRecord record creation

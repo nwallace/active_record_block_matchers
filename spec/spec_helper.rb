@@ -13,8 +13,13 @@ class Person < ActiveRecord::Base
   end
 end
 
+class Dog < ActiveRecord::Base
+  # attributes :name, :breed, :created_at, :updated_at
+end
+
 RSpec.configure do |config|
   config.after(:each) do
     Person.delete_all
+    Dog.delete_all
   end
 end

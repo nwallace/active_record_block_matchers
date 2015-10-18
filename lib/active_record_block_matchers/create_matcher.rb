@@ -11,14 +11,15 @@ RSpec::Matchers.define :create do |klasses|
 
     block.call
 
-    return_val = true
     @created_records = {}
-    klasses.each do |klass, count|
+    klasses.each{
+        |klass, count|
       column_name = ActiveRecordBlockMatchers::Config.created_at_column_name
       @created_records[klass] = klass.to_s.constantize.where("#{column_name} > ?", time_before)
-      return_val = return_val && count == @created_records[klass].count
-    end
-    return_val
+    }.select{
+      |klass, count|
+      count != @created_records[klass].count
+    }.empty?
   end
 
   failure_message do
@@ -30,10 +31,12 @@ RSpec::Matchers.define :create do |klasses|
   end
 
   def generate_failure_message(klasses, should)
-    messages = []
-    klasses.each do |klass, count|
-      messages << "The block #{should} have created #{count} #{klass.to_s.pluralize(count)}, but created #{@created_records[klass].count}." if @created_records[klass] != count
-    end
-    messages.join(' ')
+    klasses.select{
+      |klass, count|
+      @created_records[klass] != count
+    }.map{
+        |klass, count|
+      "The block #{should} have created #{count} #{klass.to_s.pluralize(count)}, but created #{@created_records[klass].count}."
+    }.join(' ')
   end
 end

@@ -15,7 +15,7 @@ RSpec::Matchers.define :create_records do |klasses|
     @created_records = {}
     klasses.each do |klass, count|
       column_name = ActiveRecordBlockMatchers::Config.created_at_column_name
-      @created_records[klass] = klass.to_s.constantize.where("#{column_name} > ?", time_before)
+      @created_records[klass] = klass.where("#{column_name} > ?", time_before)
     end.select do |klass, count|
       count != @created_records[klass].count
     end.empty?
@@ -33,7 +33,7 @@ RSpec::Matchers.define :create_records do |klasses|
     klasses.select do |klass, count|
       @created_records[klass] != count
     end.map do |klass, count|
-      "The block #{should} have created #{count} #{klass.to_s.pluralize(count)}, but created #{@created_records[klass].count}."
+      "The block #{should} have created #{count} #{klass.name.pluralize(count)}, but created #{@created_records[klass].count}."
     end.join(" ")
   end
 end

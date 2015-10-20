@@ -1,10 +1,11 @@
-RSpec::Matchers.define :create_records do |klasses|
+RSpec::Matchers.define :create_records do |record_counts|
   include ActiveSupport::Inflector
 
   supports_block_expectations
 
   description do
-    "create #{klasses}"
+    counts_strs = record_counts.map { |klass, count| count_str(klass, count) }
+    "create #{counts_strs.join(", ")}"
   end
 
   match do |block|
@@ -12,29 +13,31 @@ RSpec::Matchers.define :create_records do |klasses|
 
     block.call
 
-    @created_records = {}
-    klasses.each do |klass, count|
-      column_name = ActiveRecordBlockMatchers::Config.created_at_column_name
-      @created_records[klass] = klass.where("#{column_name} > ?", time_before)
-    end.select do |klass, count|
-      count != @created_records[klass].count
-    end.empty?
+    @incorrect_record_counts =
+      record_counts.each_with_object({}) do |(klass, expected_count), incorrect_record_counts|
+        column_name = ActiveRecordBlockMatchers::Config.created_at_column_name
+        actual_count = klass.where("#{column_name} > ?", time_before).count
+        if actual_count != expected_count
+          incorrect_record_counts[klass] = { expected: expected_count, actual: actual_count }
+        end
+      end
+    @incorrect_record_counts.empty?
   end
 
   failure_message do
-    generate_failure_message(klasses, "should")
+    @incorrect_record_counts.map do |klass, counts|
+      "The block should have created #{count_str(klass, counts[:expected])}, but created #{counts[:actual]}."
+    end.join(" ")
   end
 
   failure_message_when_negated do
-    generate_failure_message(klasses, "should not")
+    record_counts.map do |klass, expected_count|
+      "The block should not have created #{count_str(klass, expected_count)}, but created #{expected_count}."
+    end.join(" ")
   end
 
-  def generate_failure_message(klasses, should)
-    klasses.select do |klass, count|
-      @created_records[klass] != count
-    end.map do |klass, count|
-      "The block #{should} have created #{count} #{klass.name.pluralize(count)}, but created #{@created_records[klass].count}."
-    end.join(" ")
+  def count_str(klass, count)
+    "#{count} #{klass.name.pluralize(count)}"
   end
 end
 

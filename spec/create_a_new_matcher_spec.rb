@@ -50,11 +50,11 @@ RSpec.describe "`create_a_new` matcher" do
     expect(block_was_called).to be_truthy
   end
 
-  it "is aliases as `create_a`" do
+  it "is aliased as `create_a`" do
     expect { Person.create! }.to create_a(Person)
   end
 
-  it "is aliases as `create_an`" do
+  it "is aliased as `create_an`" do
     expect { Person.create! }.to create_an(Person)
   end
 

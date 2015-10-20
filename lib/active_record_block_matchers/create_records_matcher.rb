@@ -1,4 +1,4 @@
-RSpec::Matchers.define :create do |klasses|
+RSpec::Matchers.define :create_records do |klasses|
   include ActiveSupport::Inflector
 
   supports_block_expectations
@@ -37,3 +37,5 @@ RSpec::Matchers.define :create do |klasses|
     end.join(" ")
   end
 end
+
+RSpec::Matchers.alias_matcher :create, :create_records

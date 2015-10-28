@@ -4,6 +4,8 @@ class CreatePeople < ActiveRecord::Migration
       t.string :first_name
       t.string :last_name
       t.timestamps
+      t.deleted_at, :datetime
     end
+    add_index :people, :deleted_at
   end
 end

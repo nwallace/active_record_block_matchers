@@ -4,6 +4,8 @@ class CreateDogs < ActiveRecord::Migration
       t.string :name
       t.string :breed
       t.timestamps
+      t.deleted_at, :datetime
     end
+    add_index :dogs, :deleted_at
   end
 end

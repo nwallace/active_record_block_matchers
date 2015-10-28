@@ -18,6 +18,7 @@ ActiveRecord::Schema.define(:version => 20151017231107) do
     t.string   "breed"
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
+    t.datetime "destroyed_at"
   end
 
   create_table "people", :force => true do |t|
@@ -25,6 +26,7 @@ ActiveRecord::Schema.define(:version => 20151017231107) do
     t.string   "last_name"
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
+    t.datetime "destroyed_at"
   end
 
 end

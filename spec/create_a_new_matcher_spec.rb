@@ -31,6 +31,12 @@ RSpec.describe "`create_a_new` matcher" do
       .with_attributes(first_name: "Pam", last_name: "Greer", full_name: "Pam Greer")
   end
 
+  it "can use RSpec's composable matchers to verify attributes" do
+    expect { Person.create!(first_name: "Ginger") }
+      .to create_a_new(Person)
+      .with_attributes(first_name: a_string_starting_with("G"))
+  end
+
   it "fails if attributes don't match" do
     expect {
       expect { Person.create!(first_name: "Pam") }

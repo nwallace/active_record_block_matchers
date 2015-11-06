@@ -27,7 +27,7 @@ RSpec::Matchers.define :create_a_new do |klass|
     @attribute_mismatches = []
 
     @attributes && @attributes.each do |field, value|
-      unless record.public_send(field) == value
+      unless values_match?(value, record.public_send(field))
         @attribute_mismatches << [field, value, record.public_send(field)]
       end
     end

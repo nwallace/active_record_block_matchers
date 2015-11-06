@@ -55,6 +55,14 @@ expect { User.create!(username: "BOB") }
   .with_attributes(username: "bob")
 ```
 
+You can even use RSpec's [composable matchers][1]:
+
+```ruby
+expect { User.create!(username: "bob") }
+  .to create_a_new(User)
+  .with_attributes(username: a_string_starting_with("b"))
+```
+
 If you need to make assertions about things other than attribute equality, you can also chain `.which` with a block, and your block will receive the newly created record:
 
 ```ruby
@@ -83,3 +91,6 @@ To install this gem onto your local machine, run `bundle exec rake install`.
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
 5. Create a new Pull Request
+
+
+[1]: https://www.relishapp.com/rspec/rspec-expectations/v/3-3/docs/composing-matchers

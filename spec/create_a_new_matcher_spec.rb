@@ -105,6 +105,15 @@ RSpec.describe "`create_a_new` matcher" do
       expect(error.message).to eq 'Expected :first_name to be "Jill", but was nil'
     end
 
+    it "explains if record was created, but attributes did not match a composable matcher" do
+      error = capture_error do
+        expect { Person.create! }.to create_a(Person)
+          .with_attributes(first_name: a_string_starting_with("J"))
+      end
+
+      expect(error.message).to eq 'Expected :first_name to be a string starting with "J", but was nil'
+    end
+
     it "explains if record was created, but `which` block raised an error" do
       error = capture_error do
         expect { Person.create! }.to create_a(Person)
@@ -131,6 +140,16 @@ RSpec.describe "`create_a_new` matcher" do
         end
 
         expect(error.message).to eq 'the block should not have created a Person with attributes {:first_name=>"Jill"}, but did'
+      end
+
+      it "explains if a record was created that matched the given attributes with a composable matcher" do
+        error = capture_error do
+          expect { Person.create!(first_name: "Jill") }
+            .not_to create_a(Person)
+            .with_attributes(first_name: a_string_starting_with("J"))
+        end
+
+        expect(error.message).to eq 'the block should not have created a Person with attributes {:first_name=>"a string starting with \"J\""}, but did'
       end
 
       it "explains if a record was created and `which` block didn't raise an error" do

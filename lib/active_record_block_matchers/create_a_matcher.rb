@@ -48,7 +48,8 @@ RSpec::Matchers.define :create_a_new do |klass|
       "the block should have created 1 #{klass}, but created #{@created_records.count}"
     elsif @attribute_mismatches.any?
       @attribute_mismatches.map do |field, expected, actual|
-        "Expected #{field.inspect} to be #{expected.inspect}, but was #{actual.inspect}"
+        expected_description = is_composable_matcher?(expected) ? expected.description : expected.inspect
+        "Expected #{field.inspect} to be #{expected_description}, but was #{actual.inspect}"
       end.join("\n")
     else
       @which_failure.message
@@ -57,13 +58,23 @@ RSpec::Matchers.define :create_a_new do |klass|
 
   failure_message_when_negated do
     if @created_records.count == 1 && @attributes && @attribute_mismatches.none?
-      "the block should not have created a #{klass} with attributes #{@attributes.inspect}, but did"
+      "the block should not have created a #{klass} with attributes #{format_attributes_hash(@attributes).inspect}, but did"
     elsif @created_records.count == 1 && @which_block && !@which_failure
       "the newly created #{klass} should have failed an expectation in the given block, but didn't"
     elsif @created_records.count == 1
       "the block should not have created a #{klass}, but created #{@created_records.count}: #{@created_records.inspect}"
     else
       "the block created a #{klass} that matched all given criteria"
+    end
+  end
+
+  def is_composable_matcher?(value)
+    value.respond_to?(:failure_message_when_negated)
+  end
+
+  def format_attributes_hash(attributes)
+    attributes.each_with_object({}) do |(field,value), memo|
+      memo[field] = is_composable_matcher?(value) ? value.description : value
     end
   end
 end

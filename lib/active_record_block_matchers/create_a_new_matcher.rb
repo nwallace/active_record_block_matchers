@@ -13,14 +13,12 @@ RSpec::Matchers.define :create_a_new do |klass|
     @which_block = block
   end
 
-  match do |block|
-    time_before = Time.current
+  match do |options={}, block|
+    fetching_strategy = get_strategy(options.fetch(:strategy, :timestamp)).new(block)
 
-    block.call
+    @created_records = fetching_strategy.new_records(klass)
 
-    column_name = ActiveRecordBlockMatchers::Config.created_at_column_name
-    @created_records = klass.where("#{column_name} > ?", time_before)
-    return false unless @created_records.count == 1
+    return false unless @created_records.count == 1 # ? this shouldn't be necessary for all strategies...
 
     record = @created_records.first
 
@@ -66,6 +64,12 @@ RSpec::Matchers.define :create_a_new do |klass|
     else
       "the block created a #{klass} that matched all given criteria"
     end
+  end
+
+  def get_strategy(strategy)
+    {
+      timestamp: ActiveRecordBlockMatchers::TimestampStrategy,
+    }.fetch(strategy)
   end
 
   def is_composable_matcher?(value)

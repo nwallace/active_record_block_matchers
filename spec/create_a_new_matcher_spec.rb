@@ -72,14 +72,6 @@ RSpec.describe "`create_a_new` matcher" do
   end
 
   describe "failure message" do
-    def capture_error
-      begin
-        yield
-      rescue RSpec::Expectations::ExpectationNotMetError => e
-        e
-      end
-    end
-
     it "explains if no record was created" do
       error = capture_error do
         expect {}.to create_a(Person)

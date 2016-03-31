@@ -129,4 +129,26 @@ Diff:
     }.to create(Dog => 1)
       .with_attributes(Dog => [{name: a_string_starting_with("S")}])
   end
+
+  it "can chain `which` that takes a block and yields the new records" do
+    block_was_called = false
+    expect {
+      Dog.create!(name: "Ollie")
+      Person.create!(first_name: "Gary", last_name: "Hooper")
+    }.to create(Person => 1, Dog => 1)
+      .which { |records|
+        expect(records).to eq(Person => Person.where(first_name: "Gary").to_a, Dog => Dog.where(name: "Ollie").to_a)
+        block_was_called = true
+      }
+    expect(block_was_called).to be_truthy
+  end
+
+  it "explains if records were created, but `which` block raised an error" do
+    error = capture_error do
+      expect { Person.create! }.to create_records(Person => 1)
+        .which { |records| expect(records[Person].first.first_name).to eq "Jill" }
+    end
+
+    expect(error.message).to match /expected: "Jill"\s+got: nil/m
+  end
 end

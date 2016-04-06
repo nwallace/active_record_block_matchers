@@ -9,20 +9,20 @@ RSpec.describe "`create_a_new` matcher" do
   it "fails if no record of the given type was created by the block" do
     expect {
       expect {}.to create_a_new(Person)
-    }.to raise_error
+    }.to raise_error RSpec::Expectations::ExpectationNotMetError
   end
 
   it "fails if more than one record of the given type was created by the block" do
     expect {
       expect { Person.create!; Person.create! }.to create_a_new(Person)
-    }.to raise_error
+    }.to raise_error RSpec::Expectations::ExpectationNotMetError
   end
 
   it "doesn't find records created before the block" do
     Person.create!
     expect {
       expect {}.to create_a_new(Person)
-    }.to raise_error
+    }.to raise_error RSpec::Expectations::ExpectationNotMetError
   end
 
   it "can chain `with_attributes`" do
@@ -42,7 +42,7 @@ RSpec.describe "`create_a_new` matcher" do
       expect { Person.create!(first_name: "Pam") }
         .to create_a_new(Person)
         .with_attributes(first_name: "Sally")
-    }.to raise_error
+    }.to raise_error RSpec::Expectations::ExpectationNotMetError
   end
 
   it "can chain `which` that takes a block" do
@@ -68,7 +68,7 @@ RSpec.describe "`create_a_new` matcher" do
     expect {}.not_to create_a(Person)
     expect {
       expect { Person.create! }.not_to create_a(Person)
-    }.to raise_error
+    }.to raise_error RSpec::Expectations::ExpectationNotMetError
   end
 
   describe "failure message" do

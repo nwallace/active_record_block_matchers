@@ -9,7 +9,10 @@ RSpec::Matchers.define :create_records do |record_counts|
   end
 
   chain(:with_attributes) do |attributes|
-    # TODO: assert attributes has the right number of entries
+    if mismatch=attributes.find {|klass, hashes| hashes.size != record_counts[klass]}
+      mismatched_class, hashes = mismatch
+      raise ArgumentError, "Specified the block should create #{record_counts[mismatched_class]} #{mismatched_class}, but provided #{hashes.size} #{mismatched_class} attribute specifications"
+    end
     @expected_attributes = attributes
   end
 

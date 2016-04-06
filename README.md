@@ -148,6 +148,7 @@ expect { User.create!(username: "bob"); User.create!(username: "rhonda") }
   )
 
 # But this is totally fine if you really need a workaround:
+# Just put the empty hashes last
 expect { User.create!(username: "bob"); User.create!(username: "rhonda") }
   .to create(User => 2)
   .with_attributes(

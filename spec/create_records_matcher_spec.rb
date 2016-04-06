@@ -130,6 +130,20 @@ Diff:
       .with_attributes(Dog => [{name: a_string_starting_with("S")}])
   end
 
+  it "raises an error if the number of attributes specified for a class doesn't match the number of records specified" do
+    expect {
+      expect { Person.create!(first_name: "Ginger") }
+        .to create(Person => 1)
+        .with_attributes(Person => [])
+    }.to raise_error ArgumentError, "Specified the block should create 1 Person, but provided 0 Person attribute specifications"
+  end
+
+  it "is okay with blank attribute specifications" do
+    expect { Person.create! }
+      .to create(Person => 1)
+      .with_attributes(Person => [{}])
+  end
+
   it "can chain `which` that takes a block and yields the new records" do
     block_was_called = false
     expect {

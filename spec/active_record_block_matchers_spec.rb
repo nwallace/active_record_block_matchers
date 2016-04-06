@@ -22,5 +22,15 @@ RSpec.describe ActiveRecordBlockMatchers do
         described_class::Config.created_at_column_name = original_column_name
       end
     end
+
+    it "allows id_column_name to be configured" do
+      original_column_name = described_class::Config.id_column_name
+      described_class::Config.id_column_name = "pkey"
+      begin
+        expect(described_class::Config.id_column_name).to eq "pkey"
+      ensure
+        described_class::Config.id_column_name = original_column_name
+      end
+    end
   end
 end

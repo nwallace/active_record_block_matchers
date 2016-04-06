@@ -14,7 +14,7 @@ RSpec::Matchers.define :create_a_new do |klass|
   end
 
   match do |options={}, block|
-    fetching_strategy = get_strategy(options.fetch(:strategy, :timestamp)).new(block)
+    fetching_strategy = get_strategy(options.fetch(:strategy, :id)).new(block)
 
     @created_records = fetching_strategy.new_records(klass)
 
@@ -68,6 +68,7 @@ RSpec::Matchers.define :create_a_new do |klass|
 
   def get_strategy(strategy)
     {
+      id: ActiveRecordBlockMatchers::IdStrategy,
       timestamp: ActiveRecordBlockMatchers::TimestampStrategy,
     }.fetch(strategy)
   end

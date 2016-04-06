@@ -16,7 +16,7 @@ RSpec::Matchers.define :create_a_new do |klass|
   match do |options={}, block|
     fetching_strategy = get_strategy(options.fetch(:strategy, :id)).new(block)
 
-    @created_records = fetching_strategy.new_records(klass)
+    @created_records = fetching_strategy.new_records([klass])[klass]
 
     return false unless @created_records.count == 1 # ? this shouldn't be necessary for all strategies...
 

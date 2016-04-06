@@ -20,16 +20,10 @@ RSpec::Matchers.define :create_records do |record_counts|
     @which_block = block
   end
 
-  match do |block|
-    time_before = Time.current
+  match do |options={}, block|
+    fetching_strategy = get_strategy(options.fetch(:strategy, :id)).new(block)
 
-    block.call
-
-    @new_records =
-      record_counts.keys.each_with_object({}) do |klass, new_records|
-        column_name = ActiveRecordBlockMatchers::Config.created_at_column_name
-        new_records[klass] = klass.where("#{column_name} > ?", time_before).to_a
-      end
+    @new_records = fetching_strategy.new_records(record_counts.keys)
 
     @incorrect_counts =
       @new_records.each_with_object({}) do |(klass, new_records), incorrect|
@@ -111,6 +105,13 @@ RSpec::Matchers.define :create_records do |record_counts|
 
   def count_str(klass, count)
     "#{count} #{klass.name.pluralize(count)}"
+  end
+
+  def get_strategy(strategy)
+    {
+      id: ActiveRecordBlockMatchers::IdStrategy,
+      timestamp: ActiveRecordBlockMatchers::TimestampStrategy,
+    }.fetch(strategy)
   end
 end
 

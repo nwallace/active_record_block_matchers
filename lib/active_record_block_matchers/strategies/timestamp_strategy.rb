@@ -5,12 +5,14 @@ module ActiveRecordBlockMatchers
       @block = block
     end
 
-    def new_records(klass)
+    def new_records(classes)
       time_before = Time.current
 
       block.call
 
-      klass.where("#{column_name} > ?", time_before)
+      classes.each_with_object({}) do |klass, new_records|
+        new_records[klass] = klass.where("#{column_name} > ?", time_before).to_a
+      end
     end
 
     private

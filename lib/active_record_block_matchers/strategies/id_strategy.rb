@@ -5,12 +5,17 @@ module ActiveRecordBlockMatchers
       @block = block
     end
 
-    def new_records(klass)
-      id_before = klass.select("MAX(#{column_name}) as max_id").first.try(:max_id) || 0
+    def new_records(classes)
+      ids_before = classes.each_with_object({}) do |klass, ids_before|
+        ids_before[klass] = klass.select("MAX(#{column_name}) as max_id").first.try(:max_id) || 0
+      end
 
       block.call
 
-      klass.where("#{column_name} > ?", id_before)
+      classes.each_with_object({}) do |klass, new_records|
+        id_before = ids_before[klass]
+        new_records[klass] = klass.where("#{column_name} > ?", id_before).to_a
+      end
     end
 
     private

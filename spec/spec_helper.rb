@@ -13,8 +13,24 @@ class Person < ActiveRecord::Base
   end
 end
 
+class Dog < ActiveRecord::Base
+  # attributes :name, :breed, :created_at, :updated_at
+end
+
+module Helpers
+  def capture_error
+    begin
+      yield
+    rescue RSpec::Expectations::ExpectationNotMetError => e
+      e
+    end
+  end
+end
+
 RSpec.configure do |config|
+  config.include Helpers
   config.after(:each) do
     Person.delete_all
+    Dog.delete_all
   end
 end

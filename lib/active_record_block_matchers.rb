@@ -1,8 +1,7 @@
-require "active_record_block_matchers/version"
 require "rspec/expectations"
 require "active_record"
-require "active_record_block_matchers/config"
-require "active_record_block_matchers/create_a_matcher"
+
+Dir[File.dirname(__FILE__) + "/active_record_block_matchers/**/*.rb"].each {|file| require file }
 
 module ActiveRecordBlockMatchers
 end

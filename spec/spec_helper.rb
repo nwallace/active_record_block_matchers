@@ -1,36 +1,24 @@
 $LOAD_PATH.unshift File.expand_path("../../lib", __FILE__)
 require "active_record_block_matchers"
 require "sqlite3"
+require "database_cleaner"
 require "pry"
 
 db_config = YAML::load(File.open("db/config.yml")).fetch("test")
 ActiveRecord::Base.establish_connection(db_config)
 
-class Person < ActiveRecord::Base
-  # attributes :first_name, :last_name, :created_at, :updated_at
-  def full_name
-    "#{first_name} #{last_name}"
-  end
-end
-
-class Dog < ActiveRecord::Base
-  # attributes :name, :breed, :created_at, :updated_at
-end
-
-module Helpers
-  def capture_error
-    begin
-      yield
-    rescue RSpec::Expectations::ExpectationNotMetError => e
-      e
-    end
-  end
-end
+# Load spec support files
+Dir[File.join(File.dirname(__FILE__), "support", "**", "*.rb")].each {|f| require f }
 
 RSpec.configure do |config|
-  config.include Helpers
-  config.after(:each) do
-    Person.delete_all
-    Dog.delete_all
+  config.include ActiveRecordBlockMatchers::SpecUtilities
+  config.before(:suite) do
+    DatabaseCleaner.strategy = :transaction
+    DatabaseCleaner.clean_with(:truncation)
+  end
+  config.around(:each) do |example|
+    DatabaseCleaner.cleaning do
+      example.run
+    end
   end
 end

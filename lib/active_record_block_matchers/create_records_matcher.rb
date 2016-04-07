@@ -21,7 +21,8 @@ RSpec::Matchers.define :create_records do |record_counts|
   end
 
   match do |options={}, block|
-    fetching_strategy = get_strategy(options.fetch(:strategy, :id)).new(block)
+    fetching_strategy =
+      ActiveRecordBlockMatchers::Strategies.for_key(options[:strategy]).new(block)
 
     @new_records = fetching_strategy.new_records(record_counts.keys)
 
@@ -105,13 +106,6 @@ RSpec::Matchers.define :create_records do |record_counts|
 
   def count_str(klass, count)
     "#{count} #{klass.name.pluralize(count)}"
-  end
-
-  def get_strategy(strategy)
-    {
-      id: ActiveRecordBlockMatchers::IdStrategy,
-      timestamp: ActiveRecordBlockMatchers::TimestampStrategy,
-    }.fetch(strategy)
   end
 end
 

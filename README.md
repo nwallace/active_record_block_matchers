@@ -98,8 +98,6 @@ expect { User.create!(username: "BOB", password: "BlueSteel45") }
 
 **Gotcha Warning:** Be careful about your block syntax when chaining `.which` in your tests. If you write the above example with a `do...end`, the example will parse like this: `expect {...}.to(create_a(User).which) do |user| ... end`, so your block will not execute, and it may appear that your test is passing, when it is not.
 
-This matcher relies on a `created_at` column existing on the given model class.  The name of this column can be configured via `ActiveRecordBlockMatchers::Config.created_at_column_name = "your_column_name"`
-
 #### `create`
 
 aliases: `create_records`
@@ -154,6 +152,40 @@ expect { User.create!(username: "bob"); User.create!(username: "rhonda") }
   .with_attributes(
     User => [{username: "rhonda"}, {}]
   )
+```
+
+## Record Retrieval Strategies
+
+There are currently two retrieval strategies implemented: `:id` and `:timestamp`. `:id` is the default, but this can be configured via the `default_strategy` configuration variable (more details [below](#configuration)).
+
+The ID and Timestamp Strategies work similarly. The ID Strategy queries the appropriate table(s) to find the highest ID value(s) before the block, then finds new records by looking for records with an ID that higher than that. The Timestamp Strategy uses `Time.current` to record the time before the block. Then it finds new records by looking for records that have a timestamp later than that.
+
+The ID Strategy is the default because it doesn't rely on time values that may be imprecise or mocked out. The Timestamp Strategy is useful if your tables don't have autoincrementing integer primary keys.
+
+## Configuration
+
+You can configure the column names used by the ID or Timestamp Strategies. Put code like this in your `spec_helper.rb` or similar file:
+
+```ruby
+ActiveRecordBlockMatchers.configure do |config|
+
+  # default value is "id"
+  config.id_column_name = "primary_key"
+
+  # default value is "created_at"
+  config.created_at_column_name = "created_timestamp"
+
+  # default value is :id
+  # must be one of [:id, :timestamp]
+  config.default_strategy = :timestamp
+end
+```
+
+You can also override the default strategy for individual assertions if needed:
+
+```ruby
+Timecop.freeze
+expect { Person.create! }.to create_a(Person, strategy: :id)
 ```
 
 

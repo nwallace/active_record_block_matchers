@@ -29,5 +29,5 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "pry", "~> 0.10.1"
   spec.add_development_dependency "sqlite3", "~> 1.3.10"
   spec.add_development_dependency "database_cleaner", "~> 1.5.1"
-  spec.add_development_dependency "standalone_migrations", "~> 2.1.5"
+  spec.add_development_dependency "standalone_migrations", ">= 2.1.5"
 end

@@ -3,6 +3,7 @@ require "active_record_block_matchers"
 require "sqlite3"
 require "database_cleaner"
 require "pry"
+require "yaml"
 
 db_config = YAML::load(File.open("db/config.yml")).fetch("test")
 ActiveRecord::Base.establish_connection(db_config)

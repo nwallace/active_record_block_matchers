@@ -7,7 +7,7 @@ module ActiveRecordBlockMatchers
 
     def new_records(classes)
       ids_before = classes.each_with_object({}) do |klass, ids_before|
-        ids_before[klass] = klass.select("MAX(#{column_name}) as max_id").order("max_id").first.try(:max_id) || 0
+        ids_before[klass] = klass.select("MAX(#{column_name}) as max_id").take.try(:max_id) || 0
       end
 
       block.call

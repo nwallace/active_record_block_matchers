@@ -41,6 +41,14 @@ expect {
     new_profile = new_records_hash[Profile].first
     expect(new_user.profile).to eq new_profile
   }
+
+expect {
+  post :create, user: { username: "", password: "BlueSteel45" }
+}.not_to create_a(User)
+
+expect {
+  post :create, user: { username: "", password: "BlueSteel45" }
+}.not_to create_any(User, Profile)
 ```
 
 ## Detailed Examples
@@ -153,6 +161,29 @@ expect { User.create!(username: "bob"); User.create!(username: "rhonda") }
     User => [{username: "rhonda"}, {}]
   )
 ```
+
+#### `create_any`
+
+aliases: `create_any_records`
+
+Example:
+
+```ruby
+expect { User.create!; User.create!; Profile.create! }
+  .to create_any(User, Profile)
+```
+
+This matcher can be used for situations when you don't care about the exact number or attributes of the created records, you only care that at least one was created of each type.
+But it will probably be more useful to you in when negated to check that *no* records were created of any of the given types.
+
+**Note:** If you only have one type you want to make sure *wasn't* created, you can negate the `create_a` matcher (e.g. `expect { ... }.not_to create_a(User)`). This matcher is useful for doing the same thing but asserting about more than one record type all at once.
+
+```ruby
+expect { UserService.sign_up!(username: "", password: "BlueSteel45") }
+  .not_to create_any(User, Profile)
+```
+
+Unlike the other matchers, this matcher doesn't support chaining.
 
 ## Record Retrieval Strategies
 

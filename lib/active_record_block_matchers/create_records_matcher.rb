@@ -110,3 +110,5 @@ RSpec::Matchers.define :create_records do |record_counts|
 end
 
 RSpec::Matchers.alias_matcher :create, :create_records
+RSpec::Matchers.define_negated_matcher :not_create, :create_records
+RSpec::Matchers.define_negated_matcher :not_create_records, :create_records

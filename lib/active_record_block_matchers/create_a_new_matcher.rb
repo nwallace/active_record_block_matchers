@@ -80,3 +80,6 @@ end
 
 RSpec::Matchers.alias_matcher :create_a,  :create_a_new
 RSpec::Matchers.alias_matcher :create_an, :create_a_new
+RSpec::Matchers.define_negated_matcher :not_create_a, :create_a_new
+RSpec::Matchers.define_negated_matcher :not_create_an, :create_a_new
+RSpec::Matchers.define_negated_matcher :not_create_a_new, :create_a_new

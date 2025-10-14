@@ -33,3 +33,5 @@ RSpec::Matchers.define :create_any_records do |*types|
 end
 
 RSpec::Matchers.alias_matcher :create_any, :create_any_records
+RSpec::Matchers.define_negated_matcher :not_create_any, :create_any_records
+RSpec::Matchers.define_negated_matcher :not_create_any_records, :create_any_records

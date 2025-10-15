@@ -93,18 +93,18 @@ RSpec.describe "`create_records` matcher" do
         ])
     }.to raise_error(%Q|The block should have created:
     3 Person with these attributes:
-        {:first_name=>"Pam", :last_name=>"Morrison"}
-        {:first_name=>"Boris"}
-        {:first_name=>"Hugh", :last_name=>"Townes"}
+        #{{first_name: "Pam", last_name: "Morrison"}}
+        #{{first_name: "Boris"}}
+        #{{first_name: "Hugh", last_name: "Townes"}}
     1 Dog with these attributes:
-        {:name=>"Poppins"}
+        #{{name: "Poppins"}}
 Diff:
     Missing 2 Person with these attributes:
-        {:first_name=>"Boris"}
-        {:first_name=>"Hugh", :last_name=>"Townes"}
+        #{{first_name: "Boris"}}
+        #{{first_name: "Hugh", last_name: "Townes"}}
     Extra 2 Person with these attributes:
-        {:first_name=>"Shay", :last_name=>nil}
-        {:first_name=>"Carter", :last_name=>"Townes"}|)
+        #{{first_name: "Shay", last_name: nil}}
+        #{{first_name: "Carter", last_name: "Townes"}}|)
   end
 
   it "allows you to not specify attributes for all record types" do

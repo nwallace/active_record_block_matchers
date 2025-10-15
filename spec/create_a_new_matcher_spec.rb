@@ -131,7 +131,7 @@ RSpec.describe "`create_a_new` matcher" do
             .with_attributes(first_name: "Jill")
         end
 
-        expect(error.message).to eq 'the block should not have created a Person with attributes {:first_name=>"Jill"}, but did'
+        expect(error.message).to eq "the block should not have created a Person with attributes #{{first_name: "Jill"}}, but did"
       end
 
       it "explains if a record was created that matched the given attributes with a composable matcher" do
@@ -141,7 +141,7 @@ RSpec.describe "`create_a_new` matcher" do
             .with_attributes(first_name: a_string_starting_with("J"))
         end
 
-        expect(error.message).to eq 'the block should not have created a Person with attributes {:first_name=>"a string starting with \"J\""}, but did'
+        expect(error.message).to eq "the block should not have created a Person with attributes #{{first_name: 'a string starting with "J"'}}, but did"
       end
 
       it "explains if a record was created and `which` block didn't raise an error" do

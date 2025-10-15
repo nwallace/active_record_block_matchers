@@ -3,6 +3,9 @@ RSpec::Matchers.define :create_records do |record_counts|
 
   supports_block_expectations
 
+  options = {}
+  options[:strategy] = record_counts.delete(:strategy)
+
   description do
     counts_strs = record_counts.map { |klass, count| count_str(klass, count) }
     "create #{counts_strs.join(", ")}"
@@ -20,7 +23,7 @@ RSpec::Matchers.define :create_records do |record_counts|
     @which_block = block
   end
 
-  match do |options={}, block|
+  match do |block|
     fetching_strategy =
       ActiveRecordBlockMatchers::Strategies.for_key(options[:strategy]).new(block)
 

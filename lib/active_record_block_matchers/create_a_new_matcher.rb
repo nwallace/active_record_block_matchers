@@ -1,4 +1,4 @@
-RSpec::Matchers.define :create_a_new do |klass|
+RSpec::Matchers.define :create_a_new do |klass, options={}|
   supports_block_expectations
 
   description do
@@ -13,7 +13,7 @@ RSpec::Matchers.define :create_a_new do |klass|
     @which_block = block
   end
 
-  match do |options={}, block|
+  match do |block|
     fetching_strategy =
       ActiveRecordBlockMatchers::Strategies.for_key(options[:strategy]).new(block)
 

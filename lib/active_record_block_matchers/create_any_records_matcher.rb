@@ -1,12 +1,14 @@
 RSpec::Matchers.define :create_any_records do |*types|
   supports_block_expectations
 
+  options = types.pop if types.last.is_a?(Hash)
+  options ||= {}
+
   description do
     "create #{types.map(&:name).to_sentence}"
   end
 
-  match do |options={}, block|
-    @verbose = options.delete(:verbose)
+  match do |block|
     fetching_strategy =
       ActiveRecordBlockMatchers::Strategies.for_key(options[:strategy]).new(block)
 
@@ -26,7 +28,7 @@ RSpec::Matchers.define :create_any_records do |*types|
 
   failure_message_when_negated do
     @new_records.except(*@missing_types).map do |klass, new_records|
-      details = @verbose ? ":\n    #{new_records.join("\n    ")}" : "."
+      details = options[:verbose] ? ":\n    #{new_records.join("\n    ")}" : "."
       "The block should not have created any #{klass.name}, but created #{new_records.count}#{details}"
     end.join("\n")
   end

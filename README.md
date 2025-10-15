@@ -1,5 +1,4 @@
-# Build Status
-[![Build Status](https://travis-ci.org/nwallace/active_record_block_matchers.svg)](https://travis-ci.org/nwallace/active_record_block_matchers)
+[![Ruby](https://github.com/nwallace/active_record_block_matchers/actions/workflows/ruby.yml/badge.svg)](https://github.com/nwallace/active_record_block_matchers/actions/workflows/ruby.yml)
 
 # ActiveRecordBlockMatchers
 
